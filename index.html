@@ -17,7 +17,7 @@
     font-weight: bold;
     text-align: center;
     font-family: Arial, sans-serif;
-    transition: background-color 1s;
+    transition: background 1s;
     overflow: hidden;
   }
 
@@ -28,6 +28,7 @@
     gap: 30px;
     max-width: 900px;
     padding: 20px;
+    z-index: 2;
   }
 
   #qrcode {
@@ -42,49 +43,40 @@
 
   #message {
     display: none;
-    line-height: 1.5;
+    line-height: 1.6;
+    background: rgba(0,0,0,0.65);
+    padding: 30px 40px;
+    border-radius: 14px;
   }
 
-  .confetti {
+  /* Arka plan overlay (karartma için) */
+  .overlay {
     position: fixed;
-    width: 10px;
-    height: 10px;
-    top: -10px;
-    animation: fall linear infinite;
-  }
-
-  @keyframes fall {
-    to {
-      transform: translateY(110vh) rotate(360deg);
-    }
-  }
-
-  .footer {
-    margin-top: 30px;
-    font-size: 20px;
-    opacity: 0.9;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    z-index: 1;
   }
 </style>
 </head>
 
 <body>
 
+<div class="overlay" id="overlay"></div>
+
 <div class="container">
   <!-- QR KOD --> 
   <div id="qrcode"></div>
-  
+
   <!-- GERİ SAYIM -->
-  <div id="countdown">10</div>
+  <div id="countdown">5</div>
 
   <!-- MESAJ -->
   <div id="message">
-    🎉<br><br>
-
     <strong>
-    Congratulations, your bank accounts were emptied 10 seconds ago.<br><br>
-
-    <u>Not every QR code is harmless.</u>
-
+      Congratulations, your bank accounts were emptied 5 seconds ago.<br><br>
+      <u>Not every QR code is harmless.</u>
+    </strong>
   </div>
 </div>
 
@@ -92,7 +84,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
-  // QR KOD → GitHub Pages URL'si
+  // QR KOD
   new QRCode(document.getElementById("qrcode"), {
     text: "https://damlaatoprakk.github.io/qr-demo/",
     width: 220,
@@ -100,10 +92,11 @@
     correctLevel: QRCode.CorrectLevel.H
   });
 
-  let timeLeft = 10;
+  let timeLeft = 5;
   const countdownEl = document.getElementById("countdown");
   const messageEl = document.getElementById("message");
   const qrEl = document.getElementById("qrcode");
+  const overlayEl = document.getElementById("overlay");
 
   const timer = setInterval(() => {
     timeLeft--;
@@ -111,26 +104,18 @@
 
     if (timeLeft === 0) {
       clearInterval(timer);
+
+      // Sayaç bitince
       countdownEl.style.display = "none";
       qrEl.style.display = "none";
-      document.body.style.backgroundColor = "#111";
+
+      document.body.style.background =
+        "url('https://st4.depositphotos.com/7677414/22276/i/450/depositphotos_222761750-stock-photo-unrecognizable-hacker-portrait-security-technology.jpg') center / cover no-repeat fixed";
+
+      overlayEl.style.display = "block";
       messageEl.style.display = "block";
-      launchConfetti();
     }
   }, 1000);
-
-  function launchConfetti() {
-    const colors = ["#FFD700", "#00E5FF", "#00FF7F", "#FF69B4", "#FFFFFF"];
-    for (let i = 0; i < 160; i++) {
-      const conf = document.createElement("div");
-      conf.className = "confetti";
-      conf.style.left = Math.random() * 100 + "vw";
-      conf.style.backgroundColor =
-        colors[Math.floor(Math.random() * colors.length)];
-      conf.style.animationDuration = (Math.random() * 2 + 2) + "s";
-      document.body.appendChild(conf);
-    }
-  }
 </script>
 
 </body>
